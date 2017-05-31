@@ -1,30 +1,29 @@
-package filemanager;
+package reader;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import main.Application;
-import gui.Grafica;
-import socket.Client;
+
+import com.sun.security.ntlm.Client;
+
+import filemanager.AfterLoadWord;
+import filemanager.IOManager;
 
 public class DynamicReader {
-  private Client client;
   private List<String> lines;
   private String wordsOfActualLine[];
   private int linePointer;
   private int columnPointer;
   private int qtyWords;
-  private Grafica ui;
   private boolean finished;
 
-  public DynamicReader(IOManager io, File file, Grafica grafica) throws IOException {
+  public DynamicReader(IOManager io, File file) throws IOException {
     io.open(file);
     this.lines = io.read();
     this.lines.add("FIM!!");
     this.qtyWords = totalOfWords();
     this.linePointer = 0;
     this.columnPointer = 0;
-    this.ui = grafica;
     readFirstLineIfExists();
   }
 
@@ -72,10 +71,12 @@ public class DynamicReader {
         String word = this.wordsOfActualLine[columnPointer++];
         after.exec(word);
       } else {
+    	after.exec(new String());
         toNextLine();
       }
     } else {
-      ui.finishTimeline();
+    	//TODO informar que acabou? FIM por exemplo
+    	after.exec("END_FILE");
     }
   }
 
@@ -99,5 +100,12 @@ public class DynamicReader {
   public boolean isFinished() {
     return finished;
   }
-
+  
+  public void toTheEnd(){
+    this.linePointer   = this.lines.size()-1;
+    this.columnPointer = this.lines.get(linePointer).split(" ").length - 1;
+  }
+  
+  
+  
 }
