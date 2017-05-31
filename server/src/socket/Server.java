@@ -28,17 +28,24 @@ public class Server extends Thread {
     }
   }
 
-  public static void sendMessage(Socket socket, String mess) throws IOException {
-    PrintStream out = new PrintStream(socket.getOutputStream());
-    out.println(mess);
+  public static void sendMessage(Socket socket, String mess){
+    PrintStream out;
+    try {
+      out = new PrintStream(socket.getOutputStream());
+      out.println(mess);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  
   }
 
   @Override
   public void run() {
     try {
       receiveMessage(socket);
-    } catch (IOException e1) {
-      e1.printStackTrace();
+    } catch (Exception e1) {
+    	close();
     }
   }
 
@@ -49,5 +56,14 @@ public class Server extends Thread {
       Server server = new Server(client, message);
       server.start();
     }
+  }
+  
+  public void close(){
+	try {
+		socket.close();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
   }
 }

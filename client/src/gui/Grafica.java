@@ -34,7 +34,11 @@ public class Grafica implements UserInterface {
   public Grafica(String host, int port) throws UnknownHostException, IOException {
     // TODO Auto-generated constructor stub
     this.client = Client.init(host,port, (socket, message) -> {
-        print(message);
+        if (message.equals("END_FILE")) {
+        	finishTimeline();
+        }else if (!message.equals("RESETADO")){
+        	print(message);
+        } 
     });
   }
   
@@ -72,7 +76,6 @@ public class Grafica implements UserInterface {
 
     this.stop.setDisable(true);
     this.pause.setDisable(true);
-    this.slider.setDisable(true);
 
     this.slider.setMin(0.1);
     this.slider.setMax(15);
@@ -119,8 +122,9 @@ public class Grafica implements UserInterface {
   }
 
   private void createAnimation() {
+	this.timeline = new Timeline();
     this.timeline.setCycleCount(Timeline.INDEFINITE);
-    configTimeline(Duration.millis(2000), onAction());
+    configTimeline(Duration.millis(500), onAction());
   }
 
   private void changeInterval(float interval) {
@@ -154,7 +158,7 @@ public class Grafica implements UserInterface {
       e.printStackTrace();
     }
     resetButtons();
-    createAnimation();
+    changeInterval((float)this.slider.getValue());
   }
 
   private void resetButtons() {
@@ -162,4 +166,5 @@ public class Grafica implements UserInterface {
     this.stop.setDisable(true);
     this.pause.setDisable(true);
   }
+  
 }

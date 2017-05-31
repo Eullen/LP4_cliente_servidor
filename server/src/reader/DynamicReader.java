@@ -1,4 +1,4 @@
-package filemanager;
+package reader;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,8 +6,10 @@ import java.util.List;
 
 import com.sun.security.ntlm.Client;
 
+import filemanager.AfterLoadWord;
+import filemanager.IOManager;
+
 public class DynamicReader {
-  private Client client;
   private List<String> lines;
   private String wordsOfActualLine[];
   private int linePointer;
@@ -69,12 +71,12 @@ public class DynamicReader {
         String word = this.wordsOfActualLine[columnPointer++];
         after.exec(word);
       } else {
+    	after.exec(new String());
         toNextLine();
-        System.out.println("acabou linha");
       }
     } else {
     	//TODO informar que acabou? FIM por exemplo
-      System.out.println("acabou file");
+    	after.exec("END_FILE");
     }
   }
 
