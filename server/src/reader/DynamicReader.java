@@ -66,20 +66,50 @@ public class DynamicReader {
   }
 
   public void nextWord(AfterLoadWord after) {
-    if (!isFinished()) {
+    if (!isFinish()) {
       if (!isLastColumn(this.wordsOfActualLine)) {
-        String word = this.wordsOfActualLine[columnPointer++];
+        String word = this.wordsOfActualLine[this.columnPointer++];
         after.exec(word);
       } else {
     	after.exec(new String());
         toNextLine();
       }
     } else {
-    	//TODO informar que acabou? FIM por exemplo
     	after.exec("END_FILE");
     }
   }
-
+  
+  private boolean isBegin(){
+	  return (isFirstColumn() && isFirstLine());
+  }
+  
+  private boolean isFirstColumn(){
+	  return columnPointer == 0;
+  }
+  
+  private boolean isFirstLine(){
+	  return linePointer == 0;
+  }
+  
+  public void previousWord(AfterLoadWord after){
+	  if (!isBegin()){
+		  if (isFirstColumn()){
+			  if (!isFirstLine()) toPreviousLine();	
+			  this.columnPointer = wordsOfActualLine.length;
+		  }
+		  String word = this.wordsOfActualLine[this.columnPointer--];
+		  after.exec(word);
+	  }else{
+		  after.exec("BEGIN_FILE");
+	  }
+  }
+  
+  private void toPreviousLine(){
+	linePointer--;
+	wordsOfActualLine = getWordsOfLine(lines.get(linePointer));
+	columnPointer = 0;
+  }
+  
   private void toNextLine() {
     linePointer++;
     columnPointer = 0;
@@ -97,7 +127,7 @@ public class DynamicReader {
     readFirstLineIfExists();
   }
 
-  public boolean isFinished() {
+  public boolean isFinish() {
     return finished;
   }
   
@@ -105,6 +135,7 @@ public class DynamicReader {
     this.linePointer   = this.lines.size()-1;
     this.columnPointer = this.lines.get(linePointer).split(" ").length - 1;
   }
+  
   
   
   
