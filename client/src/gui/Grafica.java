@@ -30,18 +30,18 @@ public class Grafica implements UserInterface {
   private Timeline timeline;
   private Slider slider;
   private Client client;
-  
+
   public Grafica(String host, int port) throws UnknownHostException, IOException {
     // TODO Auto-generated constructor stub
-    this.client = Client.init(host,port, (socket, message) -> {
-        if (message.equals("END_FILE")) {
-        	finishTimeline();
-        }else if (!message.equals("RESETADO")){
-        	print(message);
-        } 
+    this.client = Client.init(host, port, (socket, message) -> {
+      if (message.equals("END_FILE")) {
+        finishTimeline();
+      } else if (!message.equals("RESETADO")) {
+        print(message);
+      }
     });
   }
-  
+
   @Override
   public void print(String text) {
     this.text.setText(text);
@@ -58,9 +58,9 @@ public class Grafica implements UserInterface {
     this.text.setPrefSize(600, 400);
     this.text.setFont(new Font("Verdana", 16));
     this.text.setTextFill(Color.BLACK);
-    
+
     createAnimation();
-  
+
     VBox vBox = new VBox(4);
     Scene scene = new Scene(vBox, 600, 500);
     HBox hBox = new HBox(3);
@@ -84,7 +84,7 @@ public class Grafica implements UserInterface {
 
     this.slider.valueProperty().addListener((event) -> {
       this.timeline.pause();
-      changeInterval((float) this.slider.getValue());
+      changeInterval((float)(15.9 - this.slider.getValue()));
       if (this.play.isDisabled()) {
         this.timeline.play();
       }
@@ -122,7 +122,7 @@ public class Grafica implements UserInterface {
   }
 
   private void createAnimation() {
-	this.timeline = new Timeline();
+    this.timeline = new Timeline();
     this.timeline.setCycleCount(Timeline.INDEFINITE);
     configTimeline(Duration.millis(500), onAction());
   }
@@ -139,13 +139,13 @@ public class Grafica implements UserInterface {
 
   public EventHandler<ActionEvent> onAction() {
     return (event) -> {
-        try {
-          client.sendMessage("NEXT_WORD");
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-    	};
+      try {
+        client.sendMessage("NEXT_WORD");
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    };
   }
 
   public void finishTimeline() {
@@ -154,11 +154,10 @@ public class Grafica implements UserInterface {
     try {
       client.sendMessage("RESET");
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     resetButtons();
-    changeInterval((float)this.slider.getValue());
+    changeInterval((float) (15.9 - this.slider.getValue()));
   }
 
   private void resetButtons() {
@@ -166,5 +165,5 @@ public class Grafica implements UserInterface {
     this.stop.setDisable(true);
     this.pause.setDisable(true);
   }
-  
+
 }
