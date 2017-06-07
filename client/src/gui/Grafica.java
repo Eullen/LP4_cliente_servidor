@@ -26,6 +26,10 @@ public class Grafica implements UserInterface {
   private Button pause;
   private Button play;
   private Button stop;
+  private Button next;
+  private Button previous;
+  private Button end;
+  private Button begin;
   private Label text;
   private Timeline timeline;
   private Slider slider;
@@ -38,6 +42,14 @@ public class Grafica implements UserInterface {
         finishTimeline();
       } else if (!message.equals("RESETADO")) {
         print(message);
+      }
+      switch(message){
+        case "END_FILE":
+          finishTimeline();
+          break;
+        case "BEGIN_FILE":
+          
+          break;
       }
     });
   }
@@ -54,6 +66,10 @@ public class Grafica implements UserInterface {
     this.pause = new Button("Pause");
     this.play = new Button("Play");
     this.stop = new Button("Stop");
+    this.next = new Button(">|");
+    this.previous = new Button("|<");
+    this.end      = new Button(">>");
+    this.begin    = new Button("<<");
     this.text = new Label();
     this.text.setPrefSize(600, 400);
     this.text.setFont(new Font("Verdana", 16));
@@ -63,14 +79,21 @@ public class Grafica implements UserInterface {
 
     VBox vBox = new VBox(4);
     Scene scene = new Scene(vBox, 600, 500);
-    HBox hBox = new HBox(3);
+    HBox primaryButtonsBox = new HBox(3);
+    HBox secondaryButtonsBox = new HBox(4);
     vBox.getChildren().add(this.text);
     vBox.getChildren().add(this.slider);
-    hBox.getChildren().add(this.pause);
-    hBox.getChildren().add(this.play);
-    hBox.getChildren().add(this.stop);
-    vBox.getChildren().add(hBox);
-    hBox.setAlignment(Pos.CENTER);
+    primaryButtonsBox.getChildren().add(this.pause);
+    primaryButtonsBox.getChildren().add(this.play);
+    primaryButtonsBox.getChildren().add(this.stop);
+    vBox.getChildren().add(primaryButtonsBox);
+    secondaryButtonsBox.getChildren().add(this.begin);
+    secondaryButtonsBox.getChildren().add(this.previous);
+    secondaryButtonsBox.getChildren().add(this.next);
+    secondaryButtonsBox.getChildren().add(this.end);
+    vBox.getChildren().add(secondaryButtonsBox);
+    primaryButtonsBox.setAlignment(Pos.CENTER);
+    secondaryButtonsBox.setAlignment(Pos.CENTER);
 
     this.text.setAlignment(Pos.CENTER);
 
@@ -107,15 +130,14 @@ public class Grafica implements UserInterface {
     this.stop.setOnAction((event) -> {
       this.text.setText("");
       this.timeline.stop();
-      try {
-        client.sendMessage("RESET");
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+      client.sendMessage("RESET");
       this.play.setDisable(false);
       this.stop.setDisable(true);
       this.pause.setDisable(true);
+    });
+    
+    this.previous.setOnAction((event)->{
+      client.sendMessage("PREVIOUS_WORD");
     });
     window.setScene(scene);
     window.show();
@@ -138,24 +160,13 @@ public class Grafica implements UserInterface {
   }
 
   public EventHandler<ActionEvent> onAction() {
-    return (event) -> {
-      try {
-        client.sendMessage("NEXT_WORD");
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    };
+    return (event) -> client.sendMessage("NEXT_WORD");
   }
 
   public void finishTimeline() {
     this.timeline.stop();
     this.timeline.setCycleCount(0);
-    try {
-      client.sendMessage("RESET");
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    client.sendMessage("RESET");
     resetButtons();
     changeInterval((float) (15.9 - this.slider.getValue()));
   }

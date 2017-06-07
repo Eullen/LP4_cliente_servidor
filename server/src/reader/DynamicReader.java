@@ -136,6 +136,12 @@ public class DynamicReader {
     this.columnPointer = this.lines.get(linePointer).split(" ").length - 1;
   }
   
+  public void toTheBegin(){
+    this.linePointer   = 0;
+    this.columnPointer = 0;
+    readFirstLineIfExists();
+  }
+  
   
   
   
