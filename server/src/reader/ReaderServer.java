@@ -17,28 +17,26 @@ public class ReaderServer {
 	public void exec(Socket socket, String message) {
 		System.out.println(message);
 		switch (message) {
-  		case "NEXT_WORD":
-  			reader.nextWord((word) -> {
-  				Server.sendMessage(socket, word);
-  			});
-  			break;
-  		case "PREVIOUS_WORD":
-  		  reader.previousWord((word)->{
-  		    Server.sendMessage(socket, word);
-  		  });
-  			break;
-  		case "BEGIN":
-        reader.toTheBegin();
-        break;
-      case "END":
-        reader.toTheEnd();
-        break;	
-  		case "RESET":
-  			reader.reset();
-  			Server.sendMessage(socket, "RESETADO");
-  			break;
-			default :
-			  break;
+		case "PREVIOUS_WORD":
+			this.reader.previousWord((word) -> {
+				Server.sendMessage(socket, word);
+			});
+			break;
+		case "NEXT_WORD":
+			this.reader.nextWord((word) -> {
+				Server.sendMessage(socket, word);
+			});
+			break;
+		case "BEGIN":
+			this.reader.toTheBegin();
+			break;
+		case "END":
+			this.reader.toTheEnd();
+			break;
+		case "RESET":
+			this.reader.reset();
+			Server.sendMessage(socket, "RESETADO");
+			break;
 		}
 	}
 }
