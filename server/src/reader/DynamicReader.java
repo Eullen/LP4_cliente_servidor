@@ -21,7 +21,7 @@ public class DynamicReader {
 		this.lines.add("FIM!!");
 		this.qtyWords = this.totalOfWords();
 		this.linePointer = 0;
-		this.columnPointer = 0;
+		this.columnPointer = -1;
 		this.readFirstLineIfExists();
 	}
 
@@ -40,7 +40,7 @@ public class DynamicReader {
 	}
 
 	private boolean isLastColumn(String line[]) {
-		return this.columnPointer == line.length;
+		return this.columnPointer == line.length-1;
 	}
 
 	private int totalOfWords() {
@@ -66,10 +66,10 @@ public class DynamicReader {
 	public void nextWord(AfterLoadWord after) {
 		if (!this.isFinish()) {
 			if (!this.isLastColumn(this.wordsOfActualLine)) {
-				String word = this.wordsOfActualLine[this.columnPointer++];
+			  String word = this.wordsOfActualLine[++this.columnPointer];
 				after.exec(word);
 			} else {
-				after.exec(new String());
+				after.exec("---");
 				this.toNextLine();
 			}
 		} else {
@@ -97,7 +97,7 @@ public class DynamicReader {
 				}
 				this.columnPointer = this.wordsOfActualLine.length;
 			}
-			String word = this.wordsOfActualLine[this.columnPointer--];
+			String word = this.wordsOfActualLine[--this.columnPointer];
 			after.exec(word);
 		} else {
 			after.exec("BEGIN_FILE");
@@ -107,12 +107,11 @@ public class DynamicReader {
 	private void toPreviousLine() {
 		this.linePointer--;
 		this.wordsOfActualLine = this.getWordsOfLine(this.lines.get(this.linePointer));
-		this.columnPointer = 0;
 	}
 
 	private void toNextLine() {
 		this.linePointer++;
-		this.columnPointer = 0;
+		this.columnPointer = -1;
 		if (!this.isLastLine()) {
 			this.wordsOfActualLine = this.getWordsOfLine(this.lines.get(this.linePointer));
 		} else {
@@ -121,7 +120,7 @@ public class DynamicReader {
 	}
 
 	public void reset() {
-		this.columnPointer = 0;
+		this.columnPointer = -1;
 		this.linePointer = 0;
 		this.finished = false;
 		this.readFirstLineIfExists();
@@ -138,7 +137,7 @@ public class DynamicReader {
 
 	public void toTheBegin() {
 		this.linePointer = 0;
-		this.columnPointer = 0;
+		this.columnPointer = -1;
 		this.readFirstLineIfExists();
 	}
 
