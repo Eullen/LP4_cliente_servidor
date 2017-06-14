@@ -16,10 +16,15 @@ public class Client{
     socket = socketIn;
   }
 
-  public void sendMessage(String mess) throws IOException {
-    PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
-    output.println(mess);
-    receive(socket, handler);
+  public void sendMessage(String mess){
+    PrintWriter output = null;
+    try {
+      output = new PrintWriter(socket.getOutputStream(), true);
+      output.println(mess);
+      receive(socket, handler);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public void receiveMessage(SocketMessageHandler messageHandler) throws UnknownHostException, IOException {
